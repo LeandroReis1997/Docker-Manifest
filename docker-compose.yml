@@ -1,0 +1,104 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_NAME:-filazero}
+      MYSQL_USER: ${DB_USER:-filazero}
+      MYSQL_PASSWORD: ${DB_PASS:-filazero}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - backup_mysql:/backup/mysql
+    networks:
+      - filazero_net
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - backup_redis:/backup/redis
+    networks:
+      - filazero_net
+
+  backend:
+    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-backend:v1.0.0
+    pull_policy: always
+    restart: unless-stopped
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - filazero_net
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      JWT_SECRET: ${JWT_SECRET:-supersecret}
+      DB_NAME: ${DB_NAME:-filazero}
+      DB_USER: ${DB_USER:-filazero}
+      DB_PASS: ${DB_PASS:-filazero}
+      DB_HOST: mysql
+      DB_PORT: 3306
+      REDIS_URL: redis://redis:6379
+      FRONTEND_URL: https://painel.filazerobrasil.com.br
+      ADMIN_PANEL_URL: https://painel.filazerobrasil.com.br
+      PUBLIC_API_URL: https://api.filazerobrasil.com.br/api
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASS: ${MAIL_PASS}
+      MAIL_FROM: ${MAIL_FROM}
+      FIREBASE_SERVICE_ACCOUNT_PATH: ${FIREBASE_SERVICE_ACCOUNT_PATH:-firebase-service-account.json.json}
+    expose:
+      - "4000"
+    volumes:
+      - backend_uploads:/app/public/uploads
+      - backup_backend_uploads:/backup/uploads
+
+  frontend:
+    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-frontend:v1.0.0
+    pull_policy: always
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - filazero_net
+    expose:
+      - "80"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - backend
+    ports:
+      - "80:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - filazero_net
+
+volumes:
+  mysql_data:
+  redis_data:
+  backend_uploads:
+  caddy_data:
+  caddy_config:
+  backup_mysql:
+  backup_redis:
+  backup_backend_uploads:
+
+networks:
+  filazero_net:
+    driver: bridge

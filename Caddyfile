@@ -1,0 +1,9 @@
+painel.filazerobrasil.com.br {
+    encode gzip
+    reverse_proxy frontend:80
+}
+
+api.filazerobrasil.com.br {
+    encode gzip
+    reverse_proxy backend:4000
+}
