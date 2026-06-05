@@ -4,6 +4,16 @@ Este diretório contém a configuração de orquestração Docker Compose para o
 
 ## Como usar
 
+- Antes de fazer pull das imagens, faça login no ECR:
+
+```bash
+# Windows (PowerShell)
+./ecr-login.ps1
+
+# Linux/macOS
+./ecr-login.sh
+```
+
 - Construa e inicie os serviços:
 
 ```bash
