@@ -30,7 +30,7 @@ services:
       - filazero_net
 
   backend:
-    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-backend:v1.0.0
+    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-backend:v1.2.0
     pull_policy: always
     restart: unless-stopped
     depends_on:
@@ -74,7 +74,7 @@ services:
       - ./data/backend/backup:/backup/uploads
 
   frontend:
-    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-frontend:v1.0.1
+    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-frontend:v1.2.1
     pull_policy: always
     restart: unless-stopped
     depends_on:
