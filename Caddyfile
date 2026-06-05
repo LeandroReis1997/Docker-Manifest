@@ -5,5 +5,5 @@ painel.filazerobrasil.com.br {
 
 api.filazerobrasil.com.br {
     encode gzip
-    reverse_proxy backend:80
+    reverse_proxy backend:4000
 }

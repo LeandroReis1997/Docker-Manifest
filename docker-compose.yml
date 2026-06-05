@@ -44,7 +44,7 @@ services:
       - .env
     environment:
       NODE_ENV: production
-      PORT: 80
+      PORT: 4000
       JWT_SECRET: ${JWT_SECRET:-supersecret}
       DB_NAME: ${DB_NAME:-filazero}
       DB_USER: ${DB_USER:-filazero}
@@ -96,6 +96,8 @@ services:
       - backend
     ports:
       - "80:80"
+      - "443:443"
+      - "443:443/udp"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./data/caddy/data:/data
