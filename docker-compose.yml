@@ -40,14 +40,13 @@ services:
       - filazero_net
     environment:
       NODE_ENV: production
-      PORT: 4000
+      PORT: 80
       JWT_SECRET: ${JWT_SECRET:-supersecret}
       DB_NAME: ${DB_NAME:-filazero}
       DB_USER: ${DB_USER:-filazero}
       DB_PASS: ${DB_PASS:-filazero}
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_TIMEZONE: ${DB_TIMEZONE:--03:00}
       TZ: ${TZ:-America/Sao_Paulo}
       REDIS_URL: redis://redis:6379
       FRONTEND_URL: ${FRONTEND_URL:-https://painel.filazerobrasil.com.br}
@@ -56,34 +55,18 @@ services:
       RESET_PASSWORD_EXPIRES_MINUTES: ${RESET_PASSWORD_EXPIRES_MINUTES:-60}
       PUBLIC_API_URL: ${PUBLIC_API_URL:-https://api.filazerobrasil.com.br/api}
       ALLOW_SUPER_ADMIN_WITHOUT_DOMAIN: ${ALLOW_SUPER_ADMIN_WITHOUT_DOMAIN:-false}
+      
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION:-us-east-1}
+
       S3_BUCKET_NAME: ${S3_BUCKET_NAME}
-      MAIL_HOST: ${MAIL_HOST}
-      MAIL_PORT: ${MAIL_PORT:-587}
-      MAIL_SECURE: ${MAIL_SECURE:-false}
-      MAIL_USER: ${MAIL_USER}
-      MAIL_PASS: ${MAIL_PASS}
-      MAIL_FROM: ${MAIL_FROM}
-      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Fila Zero}
-      SMTP_HOST: ${SMTP_HOST}
-      SMTP_PORT: ${SMTP_PORT:-587}
-      SMTP_SECURE: ${SMTP_SECURE:-false}
-      SMTP_USER: ${SMTP_USER}
-      SMTP_PASS: ${SMTP_PASS}
-      SMTP_FROM: ${SMTP_FROM}
-      SMTP_FROM_NAME: ${SMTP_FROM_NAME:-Fila Zero}
+
       RESEND_API_KEY: ${RESEND_API_KEY}
       RESEND_FROM: ${RESEND_FROM}
       EMAIL_LOGO_URL: ${EMAIL_LOGO_URL}
       FIREBASE_SERVICE_ACCOUNT_PATH: ${FIREBASE_SERVICE_ACCOUNT_PATH:-firebase-service-account.json.json}
       FIREBASE_SERVICE_ACCOUNT_JSON: ${FIREBASE_SERVICE_ACCOUNT_JSON}
-      TWILIO_SID: ${TWILIO_SID}
-      TWILIO_TOKEN: ${TWILIO_TOKEN}
-      TWILIO_FROM: ${TWILIO_FROM}
-      ZAPI_TOKEN: ${ZAPI_TOKEN}
-      ZAPI_INSTANCE: ${ZAPI_INSTANCE}
     expose:
       - "4000"
     volumes:
