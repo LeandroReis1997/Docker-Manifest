@@ -83,8 +83,6 @@ services:
     image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-frontend:v1.2.2
     pull_policy: always
     restart: unless-stopped
-    ports:
-      - "80:80"
     depends_on:
       - backend
     networks:
