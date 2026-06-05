@@ -5,6 +5,8 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     command: --default-authentication-plugin=mysql_native_password
+    env_file:
+      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       MYSQL_DATABASE: ${DB_NAME:-filazero}
@@ -38,6 +40,8 @@ services:
       - redis
     networks:
       - filazero_net
+    env_file:
+      - .env
     environment:
       NODE_ENV: production
       PORT: 80
