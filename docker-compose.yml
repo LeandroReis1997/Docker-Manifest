@@ -13,8 +13,8 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - backup_mysql:/backup/mysql
+      - ./data/mysql/data:/var/lib/mysql
+      - ./data/mysql/backup:/backup/mysql
     networks:
       - filazero_net
 
@@ -24,8 +24,8 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - redis_data:/data
-      - backup_redis:/backup/redis
+      - ./data/redis/data:/data
+      - ./data/redis/backup:/backup/redis
     networks:
       - filazero_net
 
@@ -60,11 +60,11 @@ services:
     expose:
       - "4000"
     volumes:
-      - backend_uploads:/app/public/uploads
-      - backup_backend_uploads:/backup/uploads
+      - ./data/backend/uploads:/app/public/uploads
+      - ./data/backend/backup:/backup/uploads
 
   frontend:
-    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-frontend:v1.0.0
+    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-frontend:v1.0.1
     pull_policy: always
     restart: unless-stopped
     depends_on:
@@ -84,20 +84,10 @@ services:
       - "80:80"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
+      - ./data/caddy/data:/data
+      - ./data/caddy/config:/config
     networks:
       - filazero_net
-
-volumes:
-  mysql_data:
-  redis_data:
-  backend_uploads:
-  caddy_data:
-  caddy_config:
-  backup_mysql:
-  backup_redis:
-  backup_backend_uploads:
 
 networks:
   filazero_net:
