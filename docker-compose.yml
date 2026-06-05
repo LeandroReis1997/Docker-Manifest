@@ -38,6 +38,8 @@ services:
     depends_on:
       - mysql
       - redis
+    ports:
+      - "4000:4000"
     networks:
       - filazero_net
     env_file:
@@ -78,9 +80,11 @@ services:
       - ./data/backend/backup:/backup/uploads
 
   frontend:
-    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-frontend:v1.2.1
+    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-frontend:v1.2.2
     pull_policy: always
     restart: unless-stopped
+    ports:
+      - "80:80"
     depends_on:
       - backend
     networks:
