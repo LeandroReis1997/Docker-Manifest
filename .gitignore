@@ -1,0 +1,24 @@
+# Segredos e ambiente
+.env
+.env.*
+!.env.example
+
+# Credenciais, chaves e notas de acesso local
+acessos
+*.pem
+*.key
+firebase-service-account*.json
+*service-account*.json
+
+# Dumps e backups de banco
+*.sql
+*.sql.gz
+filazero_db_local_dump.sql
+
+# Dados persistentes dos containers (volumes)
+data/
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+*.log

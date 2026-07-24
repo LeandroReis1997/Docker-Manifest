@@ -6,12 +6,12 @@ services:
     env_file:
       - .env
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      MYSQL_DATABASE: ${DB_NAME:-filazero}
-      MYSQL_USER: ${DB_USER:-filazero}
-      MYSQL_PASSWORD: ${DB_PASS:-filazero}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Defina MYSQL_ROOT_PASSWORD no arquivo .env}
+      MYSQL_DATABASE: ${DB_NAME:?Defina DB_NAME no arquivo .env}
+      MYSQL_USER: ${DB_USER:?Defina DB_USER no arquivo .env}
+      MYSQL_PASSWORD: ${DB_PASS:?Defina DB_PASS no arquivo .env}
     ports:
-      - "3307:3306"
+      - "127.0.0.1:3307:3306"
     volumes:
       - ./data/mysql/data:/var/lib/mysql
       - ./data/mysql/backup:/backup/mysql
@@ -21,8 +21,8 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    ports:
-      - "6379:6379"
+    expose:
+      - "6379"
     volumes:
       - ./data/redis/data:/data
       - ./data/redis/backup:/backup/redis
@@ -30,14 +30,12 @@ services:
       - filazero_net
 
   backend:
-    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-backend:v1.2.0
+    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-backend:v1.3.0
     pull_policy: always
     restart: unless-stopped
     depends_on:
       - mysql
       - redis
-    ports:
-      - "4000:4000"
     networks:
       - filazero_net
     env_file:
@@ -45,10 +43,10 @@ services:
     environment:
       NODE_ENV: production
       PORT: 4000
-      JWT_SECRET: ${JWT_SECRET:-supersecret}
-      DB_NAME: ${DB_NAME:-filazero}
-      DB_USER: ${DB_USER:-filazero}
-      DB_PASS: ${DB_PASS:-filazero}
+      JWT_SECRET: ${JWT_SECRET:?Defina JWT_SECRET no arquivo .env}
+      DB_NAME: ${DB_NAME:?Defina DB_NAME no arquivo .env}
+      DB_USER: ${DB_USER:?Defina DB_USER no arquivo .env}
+      DB_PASS: ${DB_PASS:?Defina DB_PASS no arquivo .env}
       DB_HOST: mysql
       DB_PORT: 3306
       TZ: ${TZ:-America/Sao_Paulo}
@@ -58,27 +56,37 @@ services:
       PASSWORD_RESET_BASE_URL: ${PASSWORD_RESET_BASE_URL:-https://painel.filazerobrasil.com.br}
       RESET_PASSWORD_EXPIRES_MINUTES: ${RESET_PASSWORD_EXPIRES_MINUTES:-60}
       PUBLIC_API_URL: ${PUBLIC_API_URL:-https://api.filazerobrasil.com.br/api}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-.filazerobrasil.com.br}
+      COOKIE_SAME_SITE: ${COOKIE_SAME_SITE:-strict}
+      ACCESS_TOKEN_EXPIRES_MINUTES: ${ACCESS_TOKEN_EXPIRES_MINUTES:-15}
+      REFRESH_TOKEN_EXPIRES_DAYS: ${REFRESH_TOKEN_EXPIRES_DAYS:-7}
       ALLOW_SUPER_ADMIN_WITHOUT_DOMAIN: ${ALLOW_SUPER_ADMIN_WITHOUT_DOMAIN:-false}
       
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:?Defina AWS_ACCESS_KEY_ID no arquivo .env}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:?Defina AWS_SECRET_ACCESS_KEY no arquivo .env}
       AWS_REGION: ${AWS_REGION:-us-east-1}
 
-      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:?Defina S3_BUCKET_NAME no arquivo .env}
 
-      RESEND_API_KEY: ${RESEND_API_KEY}
-      RESEND_FROM: ${RESEND_FROM}
-      EMAIL_LOGO_URL: ${EMAIL_LOGO_URL}
+      RESEND_API_KEY: ${RESEND_API_KEY:?Defina RESEND_API_KEY no arquivo .env}
+      RESEND_FROM: ${RESEND_FROM:?Defina RESEND_FROM no arquivo .env}
+      EMAIL_LOGO_URL: ${EMAIL_LOGO_URL:-https://static.filazerobrasil.com.br/painel/logo-filazero-orange.png}
       FIREBASE_SERVICE_ACCOUNT_PATH: ${FIREBASE_SERVICE_ACCOUNT_PATH:-firebase-service-account.json.json}
       FIREBASE_SERVICE_ACCOUNT_JSON: ${FIREBASE_SERVICE_ACCOUNT_JSON}
     expose:
       - "4000"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:4000/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
     volumes:
       - ./data/backend/uploads:/app/public/uploads
       - ./data/backend/backup:/backup/uploads
 
   frontend:
-    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-frontend:v1.2.2
+    image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-frontend:v1.3.1
     pull_policy: always
     restart: unless-stopped
     depends_on:
@@ -87,6 +95,12 @@ services:
       - filazero_net
     expose:
       - "80"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:80/index.html"]
+      interval: 30s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
 
   caddy:
     image: caddy:2
