@@ -18,6 +18,10 @@ filazero_db_local_dump.sql
 # Dados persistentes dos containers (volumes)
 data/
 
+# Segredos locais (Firebase etc.) — manter pasta, ignorar conteúdo
+secrets/*
+!secrets/.gitkeep
+
 # Sistema / editor
 .DS_Store
 Thumbs.db

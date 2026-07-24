@@ -71,8 +71,9 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY:?Defina RESEND_API_KEY no arquivo .env}
       RESEND_FROM: ${RESEND_FROM:?Defina RESEND_FROM no arquivo .env}
       EMAIL_LOGO_URL: ${EMAIL_LOGO_URL:-https://static.filazerobrasil.com.br/painel/logo-filazero-orange.png}
-      FIREBASE_SERVICE_ACCOUNT_PATH: ${FIREBASE_SERVICE_ACCOUNT_PATH:-firebase-service-account.json.json}
-      FIREBASE_SERVICE_ACCOUNT_JSON: ${FIREBASE_SERVICE_ACCOUNT_JSON}
+      # Preferir arquivo montado em ./secrets (evita JSON gigante no .env)
+      FIREBASE_SERVICE_ACCOUNT_PATH: ${FIREBASE_SERVICE_ACCOUNT_PATH:-/app/secrets/firebase-service-account.json}
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${FIREBASE_SERVICE_ACCOUNT_JSON:-}
     expose:
       - "4000"
     healthcheck:
@@ -84,6 +85,7 @@ services:
     volumes:
       - ./data/backend/uploads:/app/public/uploads
       - ./data/backend/backup:/backup/uploads
+      - ./secrets:/app/secrets:ro
 
   frontend:
     image: 171430923691.dkr.ecr.us-east-1.amazonaws.com/filazero-admin-frontend:v1.3.1
