@@ -74,6 +74,12 @@ services:
       # Preferir arquivo montado em ./secrets (evita JSON gigante no .env)
       FIREBASE_SERVICE_ACCOUNT_PATH: ${FIREBASE_SERVICE_ACCOUNT_PATH:-/app/secrets/firebase-service-account.json}
       FIREBASE_SERVICE_ACCOUNT_JSON: ${FIREBASE_SERVICE_ACCOUNT_JSON:-}
+
+      # Web Push (browser / WebApp com aba fechada)
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
+      VAPID_SUBJECT: ${VAPID_SUBJECT:-mailto:noreply@filazerobrasil.com.br}
+      WEBAPP_PUBLIC_URL: ${WEBAPP_PUBLIC_URL:-https://app.filazerobrasil.com.br}
     expose:
       - "4000"
     healthcheck:
